@@ -48,14 +48,12 @@ jobs:
       echo "Running dotnet build..."
       dotnet build --configuration $(buildConfiguration)
     displayName: 'Restore and Build'
-    shell: cmd
 
   - script: |
       cd MyWebApp
       echo "Running dotnet publish..."
       dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
     displayName: 'Publish Artifact'
-    shell: cmd
 
   - task: PublishBuildArtifacts@1
     inputs:

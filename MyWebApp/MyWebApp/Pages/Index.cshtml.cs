@@ -14,7 +14,7 @@ namespace MyWebApp.Pages
 
         public void OnGet()
         {
-
+            ViewData["Message"] = "Database access has already been done on April 1, 2025 by Kunj Patel";
         }
     }
 }

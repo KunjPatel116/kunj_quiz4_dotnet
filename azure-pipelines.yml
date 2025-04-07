@@ -1,0 +1,30 @@
+trigger:
+- main
+
+pool:
+  name: 'Default'  # If you have a self-hosted agent pool, replace 'Default' with your agent pool name
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- script: |
+    dotnet restore
+    dotnet build --configuration $(buildConfiguration)
+  displayName: 'Restore and Build'
+
+- script: |
+    dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+  displayName: 'Publish Artifact'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

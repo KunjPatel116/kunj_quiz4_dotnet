@@ -1,0 +1,32 @@
+trigger:
+- main
+
+pool:
+  name: 'mvc-agent-q2'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- script: |
+    cd MyWebApp
+    dotnet restore
+    dotnet build --configuration $(buildConfiguration)
+  displayName: 'Restore and Build'
+
+- script: |
+    cd MyWebApp
+    dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+  displayName: 'Publish Artifact'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

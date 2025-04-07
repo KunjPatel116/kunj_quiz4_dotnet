@@ -20,24 +20,42 @@ jobs:
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: |
-      echo "Current Directory: $(System.DefaultWorkingDirectory)"
+      echo "Build.SourcesDirectory: $(Build.SourcesDirectory)"
+      echo "Listing contents of Build.SourcesDirectory:"
+      dir "$(Build.SourcesDirectory)"
+      echo.
+      echo "Current Directory: %CD%"
       echo "Listing contents of current directory:"
       dir
+      echo.
+      if exist MyWebApp\MyWebApp.csproj (
+          echo "MyWebApp project file found."
+      ) else (
+          echo "MyWebApp project file NOT found!"
+      )
+      echo.
       echo "Changing directory to MyWebApp"
       cd MyWebApp
       echo "Listing contents of MyWebApp directory:"
       dir
+      echo.
+      echo "Running dotnet --info..."
+      dotnet --info
+      echo.
       echo "Running dotnet restore..."
       dotnet restore
+      echo.
       echo "Running dotnet build..."
       dotnet build --configuration $(buildConfiguration)
     displayName: 'Restore and Build'
+    shell: cmd
 
   - script: |
       cd MyWebApp
       echo "Running dotnet publish..."
       dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
     displayName: 'Publish Artifact'
+    shell: cmd
 
   - task: PublishBuildArtifacts@1
     inputs:
